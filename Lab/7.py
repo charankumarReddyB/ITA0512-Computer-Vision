@@ -1,19 +1,27 @@
-#8
-from google.colab import files
+#7
 import cv2
-from matplotlib import pyplot as plt
-import numpy as np
+from tkinter import Tk, filedialog
+Tk().withdraw()
+video_path = filedialog.askopenfilename(title="Select Video File")
+cap = cv2.VideoCapture(video_path)
 
-uploaded = files.upload()
-file_name = list(uploaded.keys())[0]
+if not cap.isOpened():
+    print("Error: Cannot open video")
+    exit()
 
-img = cv2.imread(file_name)
+while True:
+    ret, frame = cap.read()
+    if not ret:
+        break
+    cv2.imshow("Video Playback", frame)
+    key = cv2.waitKey(30) & 0xFF
 
-kernel = np.ones((5,5), np.uint8)
+    if key == ord('s'):   
+        cv2.waitKey(100)
+    elif key == ord('f'):
+        cv2.waitKey(5)
+    elif key == ord('q'):
+        break
 
-dilated = cv2.dilate(img, kernel, iterations=1)
-
-plt.imshow(cv2.cvtColor(dilated, cv2.COLOR_BGR2RGB))
-plt.title("Dilated Image")
-plt.axis('off')
-plt.show()
+cap.release()
+cv2.destroyAllWindows()
